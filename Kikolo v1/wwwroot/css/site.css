@@ -1,0 +1,328 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    /*background-image: url('/img/Hintergrund.png');*/ /* Pfad zum Hintergrundbild */
+    /*background-size: cover;*/ /* Stellt sicher, dass das Bild den gesamten Bildschirm abdeckt */
+    /*background-attachment: fixed;*/ /* Das Bild bleibt beim Scrollen an Ort und Stelle */
+    /*background-position: center;*/ /* Zentriert das Bild */
+    /*background-repeat: no-repeat;*/
+}
+
+/*
+    body #cardContainer.questionCard {
+        background-color: lightcoral;
+    }*/
+
+.center-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.image-hover {
+    position: relative;
+    display: inline-block;
+}
+
+    .image-hover .text {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        visibility: hidden;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px;
+    }
+
+    .image-hover:hover .text {
+        visibility: visible;
+    }
+
+.header {
+    display: flex;
+    justify-content:flex-start; /* Platzieren Sie die Elemente am Anfang und Ende des Headers */
+    align-items: center;
+    width: 100%; /* Breite des Headers (100% der Seitenbreite) */
+    background-color: transparent; /* Hintergrundfarbe des Headers (durchsichtig) */
+    border-bottom: 1px solid #333; /* Unterste Border des Headers (Farbe anpassen) */
+    padding: 10px;
+}
+    .header img {
+        margin-right: 10px;
+    }
+
+.button-container {
+    margin: 0 auto;
+    width: 80%;
+}
+
+button,
+.mode-button {
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 45%;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Zusätzliche Responsive Anpassungen */
+@media screen and (max-width: 600px) {
+    button,
+    .mode-button {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .button-container {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+}
+
+/* Stil für die Spielkarten */
+#cardContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    z-index: 1000;
+    text-align: center;
+}
+
+.questionCard, .minigameCard, .votingCard {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-shadow: none;
+    border-radius: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+}
+
+.questionCard {
+    background-color: lightblue;
+    width: 100%;
+    height: 100vh;
+}
+
+.minigameCard {
+    background-color: lightgreen;
+    width: 100%;
+    height: 100vh;
+}
+
+.votingCard {
+    background-color: lightcoral;
+    width: 100%;
+    height: 100vh;
+}
+
+.question-category {
+    background-color: lightblue;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.minigame-category {
+    background-color: lightgreen;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.voting-category {
+    background-color: lightcoral;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Stil für den User-Button */
+#userButton, .mode-button {
+    --text-color: hsla(210, 50%, 85%, 1);
+    --shadow-color: hsla(210, 40%, 52%, .4);
+    --btn-color: hsl(210, 80%, 42%);
+    --bg-color: #141218;
+    position: relative;
+    padding: 10px 20px;
+    background-color: var(--btn-color);
+    color: var(--text-color);
+    box-shadow: var(--shadow-color) 2px 2px 22px;
+    font-family: "Source Code Pro", monospace;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 30px;
+    border-radius: 4px;
+    z-index: 0;
+    overflow: hidden;
+    outline: none;
+}
+
+#adminButton {
+    --text-color: hsla(0, 50%, 85%, 1); /* Textfarbe */
+    --shadow-color: hsla(0, 40%, 52%, .4); /* Schattenfarbe */
+    --btn-color: hsl(0, 80%, 42%); /* Rote Hintergrundfarbe */
+    /* Restliche Stile wie zuvor */
+    position: relative;
+    padding: 10px 20px;
+    background-color: var(--btn-color);
+    color: var(--text-color);
+    box-shadow: var(--shadow-color) 2px 2px 22px;
+    font-family: "Source Code Pro", monospace;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 30px;
+    border-radius: 4px;
+    z-index: 0;
+    overflow: hidden;
+    outline: none;
+}
+
+    /* Individuelle Farben für die Modus-Buttons */
+    .mode-button.modus1 {
+        --btn-color: #e74c3c;
+    }
+    /* Rot */
+    .mode-button.modus2 {
+        --btn-color: #3498db;
+    }
+    /* Blau */
+    .mode-button.modus3 {
+        --btn-color: #2ecc71;
+    }
+    /* Grün */
+    .mode-button.modus4 {
+        --btn-color: #f1c40f;
+    }
+    /* Gelb */
+
+    /* Blasen-Effekte und Animationen */
+    #userButton::before, #adminButton::before, .mode-button::before {
+        content: '';
+        pointer-events: none;
+        opacity: .6;
+        background: radial-gradient(circle at 20% 35%, transparent 0, transparent 2px, var(--text-color) 3px, var(--text-color) 4px, transparent 4px), radial-gradient(circle at 75% 44%, transparent 0, transparent 2px, var(--text-color) 3px, var(--text-color) 4px, transparent 4px), radial-gradient(circle at 46% 52%, transparent 0, transparent 4px, var(--text-color) 5px, var(--text-color) 6px, transparent 6px);
+        width: 100%;
+        height: 300%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        animation: bubbles 5s linear infinite both;
+    }
+
+@keyframes bubbles {
+    from {
+        transform: translate();
+    }
+
+    to {
+        transform: translate(0, -66.666%);
+    }
+}
+
+.game-over-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    cursor: pointer; /* Zeigt an, dass der Container klickbar ist */
+}
+
+.game-over-container h1 {
+    margin-bottom: 20px;
+    /* Weitere Stile für den Titel */
+}
+
+.spieler-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Abstand zwischen den Boxen */
+    margin-top: 20px; /* Abstand zwischen Formular und Spieler-Container */
+}
+
+.spieler-box {
+    border: 1px solid #333; /* Umrandung der Box */
+    padding: 10px;
+    text-align: center;
+    position: relative; /* Für die absolute Positionierung des Lösch-Buttons */
+}
+
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 2px;
+    cursor: pointer;
+    color: black; /* Stil für das "X" */
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.center-container-fragen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Mindesthöhe des Viewports */
+    padding-top: 50px; /* Abstand von oben */
+}
+
+.add-question-form {
+    width: 50%;
+    margin: 0 auto; /* Zentriert das Formular horizontal */
+    margin-bottom: 30px;
+    display: flex; /* Verwendet Flexbox-Layout */
+    flex-direction: column; /* Stapelt die Formularelemente vertikal */
+    align-items: center; /* Zentriert die Elemente horizontal in der Mitte */
+}
+
+.question-table {
+    width: 80%; /* Breite der Tabelle */
+    margin: auto; /* Zentrieren der Tabelle */
+}
+
+.fragenpack-cell {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 1rem;
+    display: inline-block;
+    width: 100px;
+}

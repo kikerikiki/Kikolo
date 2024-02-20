@@ -1,0 +1,75 @@
+﻿@model List<Fragenpack>
+
+@{
+    ViewData["Title"] = "Fragenpacks Auswahl";
+}
+
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; 
+    }
+
+    .fragepack {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        cursor: pointer; 
+    }
+
+    .create-own-pack {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .create-own-pack button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            .create-own-pack button:hover {
+                background-color: #0056b3;
+            }
+</style>
+
+<h1>Verfügbare Fragenpacks</h1>
+
+
+<div class="container">
+    <div class="row">
+        @foreach (var fragenpack in Model)
+        {
+            <div class="col-md-4">
+                <div class="fragepack" data-id="@fragenpack.Id">
+                    @fragenpack.Name
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="create-own-pack">
+    <button onclick="window.location.href='/Home/Create'">Eigenes Fragenpack erstellen lassen</button>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var fragepacks = document.querySelectorAll('.fragepack');
+
+        fragepacks.forEach(function (fragepack) {
+            fragepack.addEventListener('click', function () {
+                var fragenpackId = fragepack.getAttribute('data-id');
+
+                window.location.href = '/Home/SelectedFragenpack?id=' + fragenpackId;
+            });
+        });
+    });
+</script>

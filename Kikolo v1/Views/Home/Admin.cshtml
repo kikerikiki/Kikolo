@@ -1,0 +1,178 @@
+﻿@model List<Kikolo_v1.Models.Question>
+
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div class="center-container-fragen">
+        <div class="add-question-form">
+            <h2>Frage hinzufügen:</h2>
+            <p>Tipp: {randomPlayer} für Spielername einfügen</p>
+            <form method="post" asp-action="Admin" asp-controller="Home">
+                <label for="questionText">Frage:</label>
+                <input type="text" id="questionText" name="questionText" required>
+
+                <label for="category">Kategorie:</label>
+                <select id="category" name="category" required>
+                    <option value="Question">Question</option>
+                    <option value="Minigame">Minigame</option>
+                    <option value="Voting">Voting</option>
+                </select>
+                <label for="fragenpack">Fragenpack:</label>
+                <select id="fragenpack" name="fragenpackId" required>
+                    @if (ViewBag.Fragenpacks != null)
+                    {
+                      foreach (var fragenpack in ViewBag.Fragenpacks.Items)
+                        {
+                            <option value="@fragenpack.Id">@fragenpack.Name</option>
+                        }
+                    }
+                </select>
+
+                <button type="submit">Frage hinzufügen</button>
+            </form>
+        </div>
+        <div class="question-table">
+            <h2>Alle Fragen:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Frage</th>
+                        <th>Kategorie</th>
+                        <th>Fragenpack</th>
+                        <th>Aktionen</th>
+                        <th>Löschen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var frage in Model)
+                    {
+                        var categoryClass = "";
+                        switch (frage.Category)
+                        {
+                            case "Question":
+                                categoryClass = "question-category";
+                                break;
+                            case "Minigame":
+                                categoryClass = "minigame-category";
+                                break;
+                            case "Voting":
+                                categoryClass = "voting-category";
+                                break;
+                        }
+
+                        <tr>
+                            <td>@frage.Text</td>
+                            <td style="width: 100px;"><span class="@categoryClass" style="width: 100px;">@frage.Category</span></td>
+                            <td class="fragenpack-cell">
+                                @String.Join(", ", frage.Fragenpacks.Select(fp => fp.Name)) <!-- Zeigt die Namen der verbundenen Fragenpacks an -->
+                            </td>
+                            <td style="width: 100px;">
+                                <button type="button" class="btn btn-warning" style="width: 100px;" onclick="openEditModal(@frage.Id, '@frage.Text', '@frage.Category')">Bearbeiten</button>
+                            </td>
+                            <td style="width: 100px;">
+                                <button type="button" class="btn btn-danger" style="width: 100px;" onclick="openDeleteModal(@frage.Id)">Löschen</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Frage bearbeiten</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formular für die Bearbeitung -->
+                    <input type="hidden" id="editQuestionId">
+                    <div class="form-group">
+                        <label>Frage:</label>
+                        <input type="text" id="editQuestionText" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Kategorie:</label>
+                        <select id="editQuestionCategory" class="form-control">
+                            <option value="Question">Question</option>
+                            <option value="Minigame">Minigame</option>
+                            <option value="Voting">Voting</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChanges()">Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Frage löschen</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Sind Sie sich sicher, dass Sie die Frage löschen wollen?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Bestätigen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+@section Scripts {
+    <script>
+        // Öffnen des Modals mit den vorhandenen Daten
+        function openEditModal(id, text, category) {
+            $('#editQuestionId').val(id);
+            $('#editQuestionText').val(text);
+            $('#editQuestionCategory').val(category);
+            $('#editModal').modal('show');
+        }
+
+        // Speichern der Änderungen
+        function saveChanges() {
+            var id = $('#editQuestionId').val();
+            var text = $('#editQuestionText').val();
+            var category = $('#editQuestionCategory').val();
+
+            $.post('/Home/Edit', { id: id, text: text, category: category }, function () {
+                $('#editModal').modal('hide');
+                location.reload();
+            });
+        }
+
+        var deleteId = 0; // Globale Variable, um die ID zu speichern
+
+        function openDeleteModal(id) {
+            deleteId = id;
+            $('#deleteModal').modal('show');
+        }
+
+        function confirmDelete() {
+            $.post('/Home/DeleteConfirmed', { id: deleteId }, function () {
+                location.reload();
+            });
+        }
+    </script>
+    }

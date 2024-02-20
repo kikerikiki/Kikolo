@@ -1,0 +1,246 @@
+﻿@{
+    ViewData["Title"] = "Eigenes Fragenpack erstellen";
+}
+
+<h1>Erstelle dein eigenes Fragenpack</h1>
+
+<div>
+    <label for="spielerNameInput">Spielername hinzufügen:</label>
+    <input type="text" id="spielerNameInput">
+    <button onclick="spielerHinzufuegen()">Hinzufügen</button>
+</div>
+
+<div id="spielerModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="schließeModal()">&times;</span>
+        <h2>Beschreibung für <span id="spielerModalName"></span></h2>
+        <textarea id="spielerBeschreibung" rows="4" cols="50"></textarea>
+        <button onclick="speichereBeschreibung()">Speichern</button>
+    </div>
+</div>
+
+<div id="spielerListe" class="spieler-container">
+
+</div>
+
+<div class="button-container">
+    <button id="generateQuestions" onclick="generateQuestions()">Fragenpack generieren lassen</button>
+</div>
+<div id="questionsList" class="questions-container"></div>
+
+<style>
+     /* Modal (background) */
+     .modal {
+         display: none;
+         position: fixed;
+         z-index: 1;
+         left: 0;
+         top: 0;
+         width: 100%;
+         height: 100%;
+         overflow: auto;
+         background-color: rgba(0,0,0,0.4);
+     }
+
+     /* Modal Content */
+     .modal-content {
+         background-color: #fefefe;
+         margin: 15% auto;
+         padding: 20px;
+         border: 1px solid #888;
+         width: 80%;
+     }
+
+     /* Schließen Button */
+     .close {
+         color: #aaa;
+         float: right;
+         font-size: 28px;
+         font-weight: bold;
+     }
+
+         .close:hover,
+         .close:focus {
+             color: black;
+             text-decoration: none;
+             cursor: pointer;
+         }
+
+    .spieler-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .spieler-box {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .spieler-box:hover {
+            background-color: #e0e0e0;
+        }
+
+    .questions-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Fügt Abstand zwischen den Fragen hinzu */
+    }
+
+        .questions-container .question {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+            transition: background-color 0.3s;
+        }
+
+            .questions-container .question:hover {
+                background-color: #f0f0f0;
+            }
+
+    .button-container {
+        text-align: center; /* Zentriert den Inhalt des Containers */
+        margin-top: 20px; /* Optional: Fügt einen Abstand nach oben hinzu */
+    }
+
+    #generateQuestions {
+        /* Optional: Weitere Stilisierung für den Button */
+        padding: 10px 20px; /* Fügt Polsterung hinzu für bessere Sichtbarkeit */
+        font-size: 16px; /* Vergrößert die Schrift */
+        cursor: pointer; /* Ändert den Cursor beim Überfahren mit der Maus */
+    }
+</style>
+@section Scripts {
+    <script>
+        var spielerListe = [];
+        var spielerDaten = {};
+
+        function spielerHinzufuegen() {
+            var spielerName = document.getElementById('spielerNameInput').value;
+            if (spielerName && !spielerDaten[spielerName]) {
+                spielerDaten[spielerName] = {
+                    beschreibung: '', // Initialisiere Beschreibung
+                    farbe: getRandomColor() // Generiere eine zufällige Farbe
+                };
+                spielerListe.push(spielerName);
+                document.getElementById('spielerNameInput').value = '';
+                spielerListeAnzeigen();
+            }
+        }
+
+
+        function spielerListeAnzeigen() {
+            var liste = document.getElementById('spielerListe');
+            liste.innerHTML = '';
+            spielerListe.forEach(function (name) {
+                var spielerDiv = document.createElement('div');
+                spielerDiv.className = 'spieler-box';
+                spielerDiv.innerHTML = name;
+                spielerDiv.style.backgroundColor = spielerDaten[name].farbe; 
+                spielerDiv.onclick = function () { spielerOptionenAnzeigen(name); };
+                liste.appendChild(spielerDiv);
+            });
+        }
+
+        function spielerOptionenAnzeigen(name) {
+            document.getElementById('spielerModalName').innerText = name;
+            document.getElementById('spielerBeschreibung').value = spielerDaten[name].beschreibung || '';
+            document.getElementById('spielerModal').style.display = "block";
+        }
+
+        function speichereBeschreibung() {
+            var name = document.getElementById('spielerModalName').innerText;
+            spielerDaten[name].beschreibung = document.getElementById('spielerBeschreibung').value;
+            schließeModal();
+        }
+
+        function schließeModal() {
+            document.getElementById('spielerModal').style.display = "none";
+        }
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function speichereBeschreibung() {
+            var spielerName = document.getElementById('spielerModalName').innerText;
+            var beschreibung = document.getElementById('spielerBeschreibung').value;
+
+            fetch('/Home/SavePlayerDescription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `spielerName=${encodeURIComponent(spielerName)}&beschreibung=${encodeURIComponent(beschreibung)}`
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Etwas ist schief gelaufen beim Speichern der Beschreibung.');
+                })
+                .then(data => {
+                    console.log(data); // Erfolgsmeldung ausgeben oder entsprechend reagieren
+                    schließeModal(); // Modal schließen oder weitere Aktionen durchführen
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                });
+        }
+
+        function generateQuestions() {
+            fetch('/Home/GenerateQuestionFromDescriptions', {
+                method: 'GET',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Netzwerkantwort war nicht ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Verarbeitet die Antwort und unterteilt sie in Kategorien
+                    const processedData = processResponse(data); // Implementiere `processResponse` basierend auf deiner Antwortstruktur
+
+                    // Löscht vorherige Inhalte
+                    const questionsList = document.getElementById('questionsList');
+                    questionsList.innerHTML = '';
+
+                    // Geht durch jede Kategorie und fügt Fragen hinzu
+                    Object.keys(processedData).forEach(category => {
+                        const categoryContainer = document.createElement('div');
+                        categoryContainer.classList.add('category');
+
+                        const categoryTitle = document.createElement('h3');
+                        categoryTitle.textContent = category;
+                        categoryContainer.appendChild(categoryTitle);
+
+                        const list = document.createElement('ul');
+                        processedData[category].forEach(question => {
+                            const item = document.createElement('li');
+                            item.textContent = question;
+                            list.appendChild(item);
+                        });
+
+                        categoryContainer.appendChild(list);
+                        questionsList.appendChild(categoryContainer);
+                    });
+                })
+                .catch(error => console.error('Fehler beim Generieren der Fragen:', error));
+        }
+
+    </script>
+}

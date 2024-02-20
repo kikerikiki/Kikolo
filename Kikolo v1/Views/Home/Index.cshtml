@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Kikolo";
+}
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinkspiel App</title>
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+    <div class="center-container">
+        <h1>Kikolo v1</h1>
+        <div class="image-hover">
+        <img src="./img/Kikolo_Mann.png" alt="Nana du bist geistig <3" height="450px" width="350px">
+        </div>
+        <div class="button-container">
+            <button id="userButton" style="--content: 'User';" data-url="@Url.Action("Auswahl", "Home")">
+                <div class="left"></div>
+                Spielen
+                <div class="right"></div>
+            </button>
+            <button id="adminButton" style="--content: 'Admin';" class="user-button" data-url="@Url.Action("Admin", "Home")"> Fragen adden </button>
+        </div>
+    </div>
+</body>
+</html>
+<style> 
+    
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var userButton = document.getElementById('userButton');
+            var adminButton = document.getElementById('adminButton');
+            var userUrl = userButton.getAttribute('data-url');
+            var adminUrl = adminButton.getAttribute('data-url');
+
+            userButton.addEventListener('click', function () {
+                window.location.href = userUrl;
+            });
+
+            adminButton.addEventListener('click', function () {
+                window.location.href = adminUrl;
+            });
+        });
+    </script>
+}

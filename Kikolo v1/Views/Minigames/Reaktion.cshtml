@@ -1,0 +1,58 @@
+﻿<div id="touchArea" style="width: 100%; height: 300px; background-color: lightblue;">
+    Alle Spieler: Berührt und haltet den Bildschirm!
+    <div id="pointsContainer"></div>
+</div>
+
+<button id="startButton">LOS!</button>
+
+<script>
+    var touchArea = document.getElementById('touchArea');
+    var pointsContainer = document.getElementById('pointsContainer');
+    var startButton = document.getElementById('startButton');
+    var gameStarted = false;
+
+    touchArea.addEventListener('touchstart', function (event) {
+        updatePoints(event.touches);
+    });
+
+    touchArea.addEventListener('touchmove', function (event) {
+        updatePoints(event.touches);
+    });
+
+    touchArea.addEventListener('touchend', function (event) {
+        updatePoints(event.touches);
+        if (gameStarted && event.touches.length === 0) {
+            console.log('Spiel beendet, letzter Punkt bleibt übrig!');
+            // Hier könnte die Logik zur Bestimmung des Verlierers stehen
+        }
+    });
+
+    startButton.addEventListener('click', function () {
+        gameStarted = true;
+        console.log('LOS!');
+        // Hier könnte eine Logik sein, um die Punkte nach einer gewissen Zeit zu löschen
+    });
+
+    function updatePoints(touches) {
+        pointsContainer.innerHTML = '';
+        for (var i = 0; i < touches.length; i++) {
+            var touch = touches[i];
+            var point = document.createElement('div');
+            point.className = 'touch-point';
+            point.style.left = touch.pageX + 'px';
+            point.style.top = touch.pageY + 'px';
+            pointsContainer.appendChild(point);
+        }
+    }
+</script>
+
+<style>
+    .touch-point {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>

@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Modus-Auswahl";
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modus-Auswahl</title>
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+    <div class="header">
+        <img src="~/img/Kikolo_Mann.png" alt="Bildbeschreibung" height="150px" width="100px">
+        <h3>Kikolo v1</h3>
+    </div>
+    <div class="center-container">
+        <div class="disco-image" style="display: none;">
+            <img src="~/img/disco.png" alt="Disco Image" width="200px" height="200px" />
+        </div>
+        <h1>Wähle deinen Modus</h1>
+        <div class="button-container">
+            <button class="mode-button modus1" style="--content: 'Modus';" data-mode="modus1" data-url="@Url.Action("Spieler", "Home")">Normal Game</button>
+            <button class="mode-button modus2" style="--content: 'Modus';" data-mode="modus2">Team Modus</button>
+            <button class="mode-button modus3" style="--content: 'Modus';" data-mode="modus3" data-url="@Url.Action("FragenPacks", "Home")">Fragenpacks auswählen</button>
+            <button class="mode-button modus4" style="--content: 'Modus';" data-mode="disco"> Disco Button</button>
+        </div>
+    </div>
+    
+</body>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mode-button');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var url = button.getAttribute('data-url');
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+
+        var discoIntervalId = null;
+        var originalBackgroundColor = ''; // Variable zur Speicherung der ursprünglichen Hintergrundfarbe
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mode-button');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var mode = button.getAttribute('data-mode');
+                    if (mode === 'disco') {
+                        activateDiscoMode();
+                    }
+                });
+            });
+        });
+
+        function activateDiscoMode() {
+            // Prüfen, ob der Disco-Modus bereits aktiv ist
+            if (discoIntervalId === null) {
+                originalBackgroundColor = document.body.style.backgroundColor;
+                discoIntervalId = setInterval(function () {
+                    changeBackgroundColor();
+                }, 250);
+
+                // Starten des Disco-Modus
+                showDiscoImage(); // Anzeigen des Disco-Bildes
+                setTimeout(function () {
+                    clearInterval(discoIntervalId);
+                    discoIntervalId = null;
+                    restoreOriginalBackgroundColor();
+                    hideDiscoImage(); // Verbergen des Disco-Bildes nach 5 Sekunden
+                }, 5000);
+            }
+        }
+
+        function changeBackgroundColor() {
+            var colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
+            var randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.backgroundColor = randomColor;
+        }
+
+        function restoreOriginalBackgroundColor() {
+            document.body.style.backgroundColor = originalBackgroundColor; // Wiederherstellen der ursprünglichen Hintergrundfarbe
+        }
+
+        function showDiscoImage() {
+            var discoImage = document.querySelector('.disco-image');
+            discoImage.style.display = 'block';
+        }
+
+        // Funktion zum Verbergen des Disco-Bildes
+        function hideDiscoImage() {
+            var discoImage = document.querySelector('.disco-image');
+            discoImage.style.display = 'none';
+        }
+    </script>
+}

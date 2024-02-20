@@ -1,0 +1,64 @@
+﻿@model List<Kikolo_v1.Models.Question>
+
+@{
+    ViewData["Title"] = "Fragen von ausgewähltem Fragenpack";
+}
+
+<h2>Fragen vom Fragenpack: @ViewBag.FragenpackName</h2>
+
+<style>
+    .category-box {
+        display: inline-block;
+        padding: 5px 10px;
+        color: white;
+        border-radius: 4px;
+        width: 100px; /* Fixe Breite */
+        text-align: center;
+    }
+
+    .question-category {
+        background-color: green;
+    }
+
+    .minigame-category {
+        background-color: blue;
+    }
+
+    .voting-category {
+        background-color: red;
+    }
+</style>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Frage</th>
+            <th>Kategorie</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var frage in Model)
+        {
+            var categoryClass = "";
+            switch (frage.Category)
+            {
+                case "Question":
+                    categoryClass = "question-category";
+                    break;
+                case "Minigame":
+                    categoryClass = "minigame-category";
+                    break;
+                case "Voting":
+                    categoryClass = "voting-category";
+                    break;
+            }
+
+            <tr>
+                <td>@frage.Text</td>
+                <td>
+                    <span class="category-box @categoryClass">@frage.Category</span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

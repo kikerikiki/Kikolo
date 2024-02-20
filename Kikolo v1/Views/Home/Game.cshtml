@@ -1,0 +1,30 @@
+﻿@model List<Kikolo_v1.Models.Question>
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+    @if (Model.Any())
+    {
+        var question = Model.First();
+        var cardClass = question.Category.ToLower() + "Card";
+
+        <div id="cardContainer" class="@cardClass" onclick="loadNewCard()">
+            <div class="@cardClass">
+                @question.Text
+            </div>
+        </div>
+    }
+    </body>
+@section Scripts {
+    <script>
+        function loadNewCard() {
+            location.reload(); // Lädt die aktuelle Seite neu
+        }
+    </script>
+}

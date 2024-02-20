@@ -21,7 +21,7 @@ namespace Kikolo_v1.Controllers
         private static List<int> displayedQuestionIds = new List<int>();
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly string _openAiApiKey = "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";
+        private readonly string _openAiApiKey = "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";
 
         public HomeController(ILogger<HomeController> logger, IMemoryCache memoryCache, KikoloContext context, IHttpClientFactory clientFactory)
         {

@@ -202,44 +202,83 @@
         }
 
         function generateQuestions() {
-            fetch('/Home/GenerateQuestionFromDescriptions', {
-                method: 'GET',
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Netzwerkantwort war nicht ok.');
-                    }
-                    return response.json();
-                })
+            fetch('/Home/GenerateQuestionFromDescriptions', { method: 'GET' })
+                .then(response => response.json())
                 .then(data => {
-                    // Verarbeitet die Antwort und unterteilt sie in Kategorien
-                    const processedData = processResponse(data); // Implementiere `processResponse` basierend auf deiner Antwortstruktur
-
-                    // Löscht vorherige Inhalte
-                    const questionsList = document.getElementById('questionsList');
-                    questionsList.innerHTML = '';
-
-                    // Geht durch jede Kategorie und fügt Fragen hinzu
-                    Object.keys(processedData).forEach(category => {
-                        const categoryContainer = document.createElement('div');
-                        categoryContainer.classList.add('category');
-
-                        const categoryTitle = document.createElement('h3');
-                        categoryTitle.textContent = category;
-                        categoryContainer.appendChild(categoryTitle);
-
-                        const list = document.createElement('ul');
-                        processedData[category].forEach(question => {
-                            const item = document.createElement('li');
-                            item.textContent = question;
-                            list.appendChild(item);
-                        });
-
-                        categoryContainer.appendChild(list);
-                        questionsList.appendChild(categoryContainer);
-                    });
+                    console.log(data);
+                    // Angenommen, data enthält eine Eigenschaft 'text', die den String enthält, den du aufteilen möchtest.
+                    if (typeof data[0] === 'string') {
+                        const processedData = processResponse(data[0]); // Verarbeite den String
+                        displayQuestions(processedData); // Zeige die Fragen an
+                    } else {
+                        console.error('Erwarteter Text wurde nicht gefunden in der Antwort');
+                    }
                 })
                 .catch(error => console.error('Fehler beim Generieren der Fragen:', error));
+        }
+
+
+        function processResponse(data) {
+            // Definiere ein Objekt, um die Fragen nach Kategorien zu organisieren
+            const questionsByCategory = {
+                "Normale Fragen": [],
+                "Voting": [],
+                "Minigames": []
+            };
+
+            // Teile den Text in Abschnitte
+            const sections = data.split('\n\n').filter(section => section.includes("1. Normale Fragen:") || section.includes("2. Voting:") || section.includes("3. Minigames:"));
+
+            // Verarbeite jeden Abschnitt und extrahiere die Fragen
+            sections.forEach(section => {
+                // Bestimme die Kategorie basierend auf dem Abschnitt
+                let category;
+                if (section.includes("1. Normale Fragen:")) category = "Normale Fragen";
+                else if (section.includes("2. Voting:")) category = "Voting";
+                else if (section.includes("3. Minigames:")) category = "Minigames";
+
+                // Extrahiere die Fragen aus dem Abschnitt
+                const questions = section.split('\n').slice(1); // Ignoriere die Zeile mit der Kategoriebeschreibung
+
+                // Bereinige jede Frage und füge sie der entsprechenden Kategorie hinzu
+                questions.forEach(question => {
+                    const cleanQuestion = question.trim().replace(/^- /, ""); // Entferne das Bindestrich-Präfix und überflüssige Leerzeichen
+                    questionsByCategory[category].push(cleanQuestion);
+                });
+            });
+
+            return questionsByCategory;
+        }
+
+
+        function displayQuestions(questionsByCategory) {
+            const container = document.getElementById('questionsList');
+            container.innerHTML = ''; // Lösche vorherige Inhalte
+
+            Object.entries(questionsByCategory).forEach(([category, questions]) => {
+                // Überspringe leere Kategorien
+                if (!questions.length) return;
+
+                // Erstelle einen Container für die Kategorie
+                const categoryContainer = document.createElement('div');
+                categoryContainer.classList.add('category-container');
+
+                // Füge den Kategorienamen hinzu
+                const categoryTitle = document.createElement('h3');
+                categoryTitle.textContent = category;
+                categoryContainer.appendChild(categoryTitle);
+
+                // Liste für die Fragen
+                const list = document.createElement('ul');
+                questions.forEach(question => {
+                    const item = document.createElement('li');
+                    item.textContent = question;
+                    list.appendChild(item);
+                });
+
+                categoryContainer.appendChild(list);
+                container.appendChild(categoryContainer);
+            });
         }
 
     </script>

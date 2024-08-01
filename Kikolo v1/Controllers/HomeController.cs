@@ -21,7 +21,7 @@ namespace Kikolo_v1.Controllers
         private static List<int> displayedQuestionIds = new List<int>();
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly string _openAiApiKey = "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";
+        private readonly string _openAiApiKey = "sblub";
 
         public HomeController(ILogger<HomeController> logger, IMemoryCache memoryCache, KikoloContext context, IHttpClientFactory clientFactory)
         {
@@ -54,7 +54,6 @@ namespace Kikolo_v1.Controllers
             var selectedFragenpackId = HttpContext.Session.GetInt32("SelectedFragenpackId");
             if (selectedFragenpackId == null)
             {
-                // Kein Fragenpack ausgewählt, leiten Sie zu einer geeigneten Seite um
                 return RedirectToAction("SomeOtherAction");
             }
 
@@ -69,7 +68,7 @@ namespace Kikolo_v1.Controllers
 
             if (frage != null)
             {
-                displayedQuestionIds.Add(frage.Id); // Schon benutzte Fragen 
+                displayedQuestionIds.Add(frage.Id); 
 
                 if (playerListe.Any())
                 {
@@ -117,8 +116,7 @@ namespace Kikolo_v1.Controllers
             var selectedFragenpackId = HttpContext.Session.GetInt32("SelectedFragenpackId");
             if (selectedFragenpackId == null)
             {
-                // Kein Fragenpack ausgewählt, geben Sie null zurück oder leiten Sie um
-                return null; // Oder eine andere geeignete Behandlung
+                return null; 
             }
 
             var random = new Random();
@@ -144,9 +142,9 @@ namespace Kikolo_v1.Controllers
                 playerListe = new List<string>();
             }
 
-            var fragenpacks = _context.Fragenpacks.ToList(); // Laden der Fragenpacks
+            var fragenpacks = _context.Fragenpacks.ToList(); 
             ViewBag.PlayerList = playerListe;
-            ViewBag.Fragenpacks = new SelectList(fragenpacks, "Id", "Name"); // Übergeben an die View
+            ViewBag.Fragenpacks = new SelectList(fragenpacks, "Id", "Name"); 
 
             return View(playerListe);
         }
@@ -173,7 +171,7 @@ namespace Kikolo_v1.Controllers
             ViewBag.PlayerList = playerListe;
             HttpContext.Session.Set("playerListe", SerializeToByteArray(playerListe));
 
-            var fragenpacks = _context.Fragenpacks.ToList(); // Laden der Fragenpacks für die Post-Anfrage
+            var fragenpacks = _context.Fragenpacks.ToList(); 
             ViewBag.Fragenpacks = new SelectList(fragenpacks, "Id", "Name");
 
             return View(playerListe);
@@ -217,7 +215,6 @@ namespace Kikolo_v1.Controllers
                     var fragenpack = await _context.Fragenpacks.FindAsync(fragenpackId);
                     if (fragenpack != null)
                     {
-                        // Fügen Sie die Frage zum Fragenpack hinzu
                         fragenpack.Questions.Add(neueFrage);
                         await _context.SaveChangesAsync();
                     }
